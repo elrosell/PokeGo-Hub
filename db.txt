@@ -1,0 +1,16 @@
+CREATE DATABASE poke_rodrigo;
+USE poke_rodrigo;
+
+CREATE TABLE equipos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    region VARCHAR(50),
+    tipo_equipo VARCHAR(50), -- 'Planta', 'Fuego', 'Agua', 'Competitivo'
+    pokemon_nombres VARCHAR(255) -- Nombres separados por comas
+);
+
+
+Primero pon lo de arriba en tu line client y después esto de aca abajo
+
+
+ALTER TABLE equipos ADD COLUMN autor VARCHAR(50) DEFAULT 'Rodrigo';
+ALTER TABLE equipos ADD COLUMN notas TEXT;

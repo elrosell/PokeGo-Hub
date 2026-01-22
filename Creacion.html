@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7000ff;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-muted: #94a3b8;
+            --input-bg: #0b1120;
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: var(--bg); 
+            background-image: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+            color: white; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0;
+            padding: 20px; 
+        }
+
+        .form-card { 
+            background: var(--card-bg); 
+            padding: 40px; 
+            border-radius: 24px; 
+            width: 100%; 
+            max-width: 600px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h3 { 
+            color: var(--primary); 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        .input-group { margin-bottom: 5px; }
+
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-size: 0.85rem; 
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, select, textarea { 
+            width: 100%; 
+            padding: 14px; 
+            background: var(--input-bg); 
+            border: 2px solid #334155; 
+            border-radius: 12px; 
+            color: white; 
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus { 
+            border-color: var(--primary); 
+            outline: none; 
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.15);
+            background: #111a2e;
+        }
+
+        textarea { resize: none; }
+
+        .btn-submit { 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            color: white; 
+            font-weight: 800; 
+            text-transform: uppercase;
+            border: none; 
+            padding: 16px; 
+            border-radius: 12px; 
+            width: 100%; 
+            cursor: pointer; 
+            margin-top: 10px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-submit:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 10px 25px rgba(112, 0, 255, 0.4);
+            filter: brightness(1.1);
+        }
+
+        /* Estilo para los placeholders */
+        ::placeholder { color: #475569; font-size: 0.85rem; }
+
+        @media (max-width: 500px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-card">
+    <div class="header">
+        <h3>Registro de Entrenador</h3>
+        <p>Publica tu equipo en la Base de Datos Mundial</p>
+    </div>
+
+    <form action="creacion.jsp" method="post">
+        <div class="form-grid">
+            <div class="input-group full-width">
+                <label>ID de entrenador / Nickname</label>
+                <input type="text" name="autor" placeholder="Ej: Ash_Ketchum_99" required>
+            </div>
+
+            <div class="input-group">
+                <label>Región</label>
+                <select name="region">
+                    <option value="Kanto">Kanto</option>
+                    <option value="Johto">Johto</option>
+                    <option value="Hoenn">Hoenn</option>
+                    <option value="Sinnoh">Sinnoh</option>
+                    <option value="Teselia">Teselia</option>
+                    <option value="Kalos">Kalos</option>
+                    <option value="Alola">Alola</option>
+                    <option value="Galar">Galar</option>
+                    <option value="Paldea" selected>Paldea</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Formato</label>
+                <select name="tipo">
+                    <option value="Aventura">🎮 Aventura</option>
+                    <option value="Competitivo">🏆 Competitivo</option>
+                    <option value="Tematico">🎭 Temático</option>
+                    <option value="Nuzlocke">💀 Nuzlocke</option>
+                </select>
+            </div>
+
+            <div class="input-group full-width">
+                <label>Tu Equipo (6 Pokémon)</label>
+                <textarea name="pokes" rows="3" placeholder="Separa los nombres por comas..." required></textarea>
+            </div>
+
+            <div class="input-group full-width">
+                <label>Estrategia o Notas</label>
+                <input type="text" name="notas" placeholder="Ej: Basado en clima lluvioso">
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">
+            <span>REGISTRAR EQUIPO</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+    </form>
+</div>
+
+</body>
+</html>

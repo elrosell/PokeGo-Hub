@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;500;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bw-dark: #000000; --bw-light: #ffffff;
+            --accent: #f1c40f; --fuego: #ff3e3e; --agua: #00d2ff; --planta: #00ff88; --comp: #a55eea;
+            --neon-shadow: 0 0 15px rgba(241, 196, 15, 0.3);
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; background: #080808; color: white; margin: 0; 
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .header-area { 
+            background: var(--bw-dark); padding: 60px 20px; text-align: center;
+            border-bottom: 2px solid var(--accent); position: relative;
+        }
+        .header-area h1 { 
+            font-family: 'Syncopate', sans-serif; font-size: clamp(1.2rem, 5vw, 2.5rem); font-weight: 700;
+            margin: 0; letter-spacing: 10px; color: var(--bw-light);
+        }
+
+        .container { max-width: 1300px; margin: 0 auto; padding: 20px; }
+
+        .region-tag { 
+            font-family: 'Syncopate', sans-serif; font-size: 0.8rem; padding: 12px 25px; 
+            margin: 40px 0 20px 0; display: inline-block; border-left: 4px solid var(--accent);
+            background: rgba(255,255,255,0.05); letter-spacing: 3px; width: 100%; box-sizing: border-box;
+        }
+
+        .team-section { 
+            background: #111; border: 1px solid #222; border-radius: 4px;
+            padding: 20px; margin-bottom: 25px;
+        }
+        .team-title { 
+            font-size: 0.75rem; font-weight: 800; text-transform: uppercase; 
+            letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+        }
+        .team-title span { width: 10px; height: 10px; border-radius: 2px; }
+
+        /* GRID: Forzamos 6 columnas para que quepan en una fila y crezcan proporcionalmente */
+        .poke-grid { 
+            display: grid; 
+            grid-template-columns: repeat(6, 1fr); 
+            gap: 15px; 
+        }
+
+        .poke-card {
+            background: #000; border: 1px solid #222; padding: 15px; position: relative;
+            transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); cursor: pointer;
+            text-align: center;
+        }
+        .poke-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: var(--neon-shadow); }
+        .poke-card img { width: 100%; filter: grayscale(0.3); transition: 0.3s; }
+        .poke-card:hover img { filter: grayscale(0); }
+        .poke-card p { font-size: 0.75rem; font-weight: 700; margin: 10px 0 0 0; text-transform: uppercase; color: #bbb; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Modal */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; 
+            width: 100%; height: 100%; background: rgba(0,0,0,0.95); overflow-y: auto;
+        }
+        .modal-content {
+            background: #0a0a0a; margin: 5vh auto; width: 95%; max-width: 750px;
+            display: flex; border: 1px solid #333; position: relative;
+        }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 25px; cursor: pointer; z-index: 10; color: var(--accent); }
+        .modal-left { background: #000; width: 40%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; border-right: 1px solid #222; }
+        .modal-right { width: 60%; padding: 30px; }
+        
+        .stat-row { margin-bottom: 12px; }
+        .stat-bar-bg { background: #1a1a1a; height: 4px; border-radius: 2px; margin-top: 5px; }
+        .stat-bar-fill { height: 100%; background: var(--accent); box-shadow: 0 0 8px var(--accent); transition: width 0.8s; }
+
+        .moves-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; }
+        .move-box { background: #111; padding: 10px; font-size: 0.7rem; border-left: 2px solid var(--accent); text-transform: uppercase; }
+
+        @media (max-width: 1000px) {
+            .poke-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 700px) {
+            .modal-content { flex-direction: column; }
+            .modal-left, .modal-right { width: 100%; box-sizing: border-box; }
+            .poke-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-area">
+        <h1>TESELIA: DUALIDAD</h1>
+        <p style="font-size: 0.8rem; opacity: 0.5; letter-spacing: 5px;">DIFERENCIA DE IDEALES Y PRIORIDADES</p>
+    </header>
+
+    <div class="container" id="main-content"></div>
+
+    <div id="pokeModal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="modal-left">
+                <img id="modalImg" style="width: 100%; max-width: 200px;">
+                <h2 id="modalName" style="font-family:'Syncopate'; margin: 20px 0 5px 0; font-size: 1.2rem;"></h2>
+                <div id="modalType" style="font-size: 0.65rem; letter-spacing: 2px; color: var(--accent);"></div>
+            </div>
+            <div class="modal-right">
+                <div id="modalStats"></div>
+                <div class="moves-grid" id="modalMoves"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const data = {
+            '🏙️ UNOVA (BLACK & WHITE 1)': {
+                color: 'var(--bw-light)',
+                teams: [
+                    { title: 'TEAM EMBOAR', type: 'fuego', pokes: [['Emboar', 500, 'Fuego/Lucha', '110,123,65,100,65,65', 'Envite Ígneo, Machada, Voltio Cruel, Testarazo'], ['Archeops', 567, 'Roca/Volador', '75,140,65,112,65,110', 'Acróbata, Avalancha, Ida y Vuelta, Garra Dragón'], ['Krookodile', 553, 'Tierra/Sin.', '95,117,80,65,70,92', 'Terremoto, Triturar, Enfado, Roca Afilada'], ['Galvantula', 596, 'Bicho/Eléc.', '70,77,60,97,60,108', 'Trueno, Zumbido, Red Viscosa, Energibola'], ['Haxorus', 612, 'Dragón', '76,147,90,60,70,97', 'Danza Dragón, Enfado, Demolición, Tijera X'], ['Chandelure', 609, 'Fantas./Fue.', '60,55,90,145,90,80', 'Lanzallamas, Bola Sombra, Energibola, Paz Mental']] },
+                    { title: 'TEAM SAMUROTT', type: 'agua', pokes: [['Samurott', 503, 'Agua', '95,100,85,108,70,70', 'Surf, Tajo Umbrío, Megacuerno, Rayo Hielo'], ['Darmanitan', 555, 'Fuego', '105,140,55,30,55,95', 'Envite Ígneo, Fuerza Bruta, Avalancha, Ida y Vuelta'], ['Lilligant', 549, 'Planta', '70,60,75,110,75,90', 'Danza Quetzal, Gigadrenado, Danza Pétalo, Somnífero'], ['Sigilyph', 561, 'Psiq./Vol.', '72,58,80,103,80,97', 'Psíquico, Tajo Aéreo, Rayo Hielo, Masa Cósmica'], ['Eelektross', 604, 'Eléctrico', '85,115,80,105,80,50', 'Rayo, Lanzallamas, Puño Incremento, Triturar'], ['Hydreigon', 635, 'Sin./Dragón', '92,105,90,125,90,98', 'Pulso Dragón, Pulso Umbrío, Lanzallamas, Surf']] },
+                    { title: 'TEAM SERPERIOR', type: 'planta', pokes: [['Serperior', 497, 'Planta', '75,75,95,75,95,113', 'Lluevehojas, Enrosque, Hoja Aguda, Gigadrenado'], ['Seismitoad', 537, 'Agua/Tierra', '105,95,75,85,75,74', 'Surf, Terremoto, Puño Drenaje, Bomba Lodo'], ['Scrafty', 560, 'Sin./Lucha', '65,90,115,45,115,58', 'Puño Drenaje, Triturar, Puño Hielo, Danza Dragón'], ['Braviary', 628, 'Normal/Vol.', '100,123,75,57,75,80', 'Pájaro Osado, Fuerza Bruta, Retribución, Vuelo'], ['Reuniclus', 579, 'Psíquico', '110,65,75,125,85,30', 'Psíquico, Bola Sombra, Onda Certera, Recuperación'], ['Volcarona', 637, 'Bicho/Fuego', '85,60,65,135,105,100', 'Danza Llama, Zumbido, Danza Aleteo, Gigadrenado']] },
+                    { title: 'TEAM COMPETITIVO', type: 'comp', pokes: [['Zoroark', 571, 'Siniestro', '60,105,60,120,60,105', 'Pulso Noche, Lanzallamas, Onda Certera, Ida y Vuelta'], ['Conkeldurr', 534, 'Lucha', '105,140,95,55,65,45', 'Ultrapuño, Puño Drenaje, Roca Afilada, Desarme'], ['Excadrill', 530, 'Tier./Acero', '110,135,60,50,65,88', 'Terremoto, Avalancha, Giro Rápido, Danza Espada'], ['Ferrothorn', 598, 'Planta/Acero', '74,94,131,54,116,20', 'Latigazo, Giro Bola, Trampa Rocas, Drenadoras'], ['Golurk', 623, 'Tier./Fantas.', '89,124,80,55,80,55', 'Puño Sombra, Terremoto, Puño Dinámico, Machada'], ['Bisharp', 625, 'Sin./Acero', '65,125,100,60,70,70', 'Golpe Bajo, Cabeza de Hierro, Danza Espada, Desarme']] }
+                ]
+            },
+            '❄️ TESELIA (BLACK & WHITE 2)': {
+                color: '#3498db',
+                teams: [
+                    { title: 'TEAM EMBOAR BW2', type: 'fuego', pokes: [['Emboar', 500, 'Fuego/Lucha', '110,123,65,100,65,65', 'Envite Ígneo, Machada, Voltio Cruel, Testarazo'], ['Lucario', 448, 'Lucha/Acero', '70,110,70,115,70,90', 'Esfera Aural, Puño Bala, Psíquico, Pulso Dragón'], ['Magnezone', 462, 'Elec./Acero', '70,70,115,130,90,60', 'Rayo, Foco Resplandor, Voltiocambio, Triataque'], ['Flygon', 330, 'Tier./Dragón', '80,100,80,80,80,100', 'Terremoto, Garra Dragón, Puño Fuego, Vuelo'], ['Starmie', 121, 'Agua/Psíq.', '60,75,85,100,85,115', 'Surf, Psíquico, Rayo, Rayo Hielo'], ['Zoroark', 571, 'Siniestro', '60,105,60,120,60,105', 'Pulso Umbrío, Lanzallamas, Onda Certera, Ida y Vuelta']] },
+                    { title: 'TEAM SAMUROTT BW2', type: 'agua', pokes: [['Samurott', 503, 'Agua', '95,100,85,108,70,70', 'Cascada, Megacuerno, Rayo Hielo, Acua Jet'], ['Arcanine', 59, 'Fuego', '90,110,80,100,80,95', 'Envite Ígneo, Voltio Cruel, Veloc. Extrema, Triturar'], ['Espeon', 196, 'Psíquico', '65,65,60,130,95,110', 'Psíquico, Bola Sombra, Paz Mental, Sol Matinal'], ['Heracross', 214, 'Bicho/Lucha', '80,125,75,40,95,85', 'Megacuerno, A Bocajarro, Avalancha, Tajo Umbrío'], ['Golduck', 55, 'Agua', '80,82,78,95,80,85', 'Surf, Rayo Hielo, Psíquico, Hidrobomba'], ['Aggron', 306, 'Acero/Roca', '70,110,180,60,60,50', 'Cabeza de Hierro, Terremoto, Testarazo, Carga Dragón']] },
+                    { title: 'TEAM SERPERIOR BW2', type: 'planta', pokes: [['Serperior', 497, 'Planta', '75,75,95,75,95,113', 'Lluevehojas, Pulso Dragón, Gigadrenado, Mofa'], ['Vaporeon', 134, 'Agua', '130,65,60,110,95,65', 'Surf, Rayo Hielo, Armadura Ácida, Deseo'], ['Crobat', 169, 'Ven./Vol.', '85,90,80,70,80,130', 'Veneno X, Acróbata, Ida y Vuelta, Rayo Confuso'], ['Metagross', 376, 'Acero/Psíq.', '80,135,130,95,90,70', 'Puño Meteoro, Cabezazo Zen, Terremoto, Puño Hielo'], ['Electivire', 466, 'Eléctrico', '75,123,67,95,85,95', 'Puño Trueno, Puño Hielo, Puño Fuego, Terremoto'], ['Chandelure', 609, 'Fantas./Fue.', '60,55,90,145,90,80', 'Sofoco, Bola Sombra, Energibola, Psíquico']] },
+                    { title: 'TEAM COMPETITIVO BW2', type: 'comp', pokes: [['Kyurem-Black', 646, 'Hielo/Dragón', '125,170,100,120,90,95', 'Rayos Fusión, Garra Dragón, Rayo Hielo, Terremoto'], ['Keldeo', 647, 'Agua/Lucha', '91,72,90,129,90,108', 'Sablemístico, Escaldar, Hidrobomba, Paz Mental'], ['Terrakion', 639, 'Roca/Lucha', '91,129,90,72,90,108', 'A Bocajarro, Avalancha, Terremoto, Danza Espada'], ['Genesect', 649, 'Bicho/Acero', '71,120,95,120,95,99', 'Tecno Shock, Rayo, Lanzallamas, Ida y Vuelta'], ['Latios', 381, 'Dragón/Psíq.', '80,90,80,130,110,110', 'Cometa Draco, Psíquico, Rayo, Recuperación'], ['Gliscor', 472, 'Tier./Vol.', '75,95,125,45,75,95', 'Terremoto, Acróbata, Tóxico, Protección']] }
+                ]
+            }
+        };
+
+        function init() {
+            const container = document.getElementById('main-content');
+            for (let region in data) {
+                container.innerHTML += `<div class="region-tag" style="border-color:${data[region].color}">${region}</div>`;
+                data[region].teams.forEach(team => {
+                    let teamHtml = `<div class="team-section"><div class="team-title"><span style="background:var(--${team.type})"></span>${team.title}</div><div class="poke-grid">`;
+                    team.pokes.forEach(p => {
+                        teamHtml += `
+                            <div class="poke-card" onclick="openPoke('${p[0]}','${p[1]}','${p[2]}','${p[3]}','${p[4]}')">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p[1]}.png">
+                                <p>${p[0]}</p>
+                            </div>`;
+                    });
+                    teamHtml += `</div></div>`;
+                    container.innerHTML += teamHtml;
+                });
+            }
+        }
+
+        function openPoke(nombre, id, tipo, stats, movs) {
+            document.getElementById('modalName').innerText = nombre;
+            document.getElementById('modalType').innerText = tipo;
+            document.getElementById('modalImg').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+            
+            const labels = ['PS', 'ATK', 'DEF', 'SPA', 'SPD', 'SPE'];
+            const values = stats.split(',');
+            const statsDiv = document.getElementById('modalStats');
+            statsDiv.innerHTML = "";
+            values.forEach((v, i) => {
+                statsDiv.innerHTML += `
+                    <div class="stat-row">
+                        <div style="display:flex; justify-content:space-between; font-size:0.65rem; font-weight:800; opacity:0.7">
+                            <span>${labels[i]}</span><span>${v}</span>
+                        </div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(v/180)*100}%"></div></div>
+                    </div>`;
+            });
+
+            const movesDiv = document.getElementById('modalMoves');
+            movesDiv.innerHTML = "";
+            movs.split(',').forEach(m => { movesDiv.innerHTML += `<div class="move-box">${m.trim()}</div>`; });
+            document.getElementById('pokeModal').style.display = "block";
+        }
+
+        function closeModal() { document.getElementById('pokeModal').style.display = "none"; }
+        init();
+    </script>
+</body>
+</html>

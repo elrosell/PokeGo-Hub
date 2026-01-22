@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fuego: #ff7e5f; --agua: #00c6ff; --planta: #76b852; --comp: #f093fb;
+            --bg: #1a2a6c; --card-bg: #fdfbfb1a; --alola-gold: #feb47b;
+        }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); background-attachment: fixed; color: white; padding: 20px; }
+        
+        .header-area { text-align: center; margin-bottom: 40px; }
+        .header-area h1 { color: var(--alola-gold); text-transform: uppercase; letter-spacing: 6px; font-size: 2.8rem; text-shadow: 3px 3px 0px rgba(0,0,0,0.2); }
+
+        .team-section { 
+            background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(8px);
+            padding: 25px; border-radius: 25px; 
+            border: 2px solid rgba(255, 255, 255, 0.1); margin-bottom: 40px;
+        }
+        .team-title { font-size: 1.5rem; margin-bottom: 20px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid var(--alola-gold); display: inline-block; }
+
+        .poke-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; }
+        
+        .poke-card {
+            background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 20px; text-align: center;
+            cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,0.1);
+        }
+        .poke-card:hover { transform: translateY(-10px) rotate(2deg); background: rgba(255, 255, 255, 0.2); border-color: var(--alola-gold); }
+        .poke-card img { width: 100%; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3)); }
+
+        .modal {
+            display: none; position: fixed; z-index: 100; left: 0; top: 0; 
+            width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
+        }
+        .modal-content {
+            background: #fff; color: #333; margin: 2% auto; padding: 30px; 
+            width: 90%; max-width: 500px; border-radius: 40px; border: none;
+            text-align: center; animation: pop 0.4s ease;
+        }
+        
+        .close { position: absolute; top: 20px; right: 30px; font-size: 40px; cursor: pointer; color: white; }
+        .stat-bar-bg { background: #eee; height: 10px; border-radius: 5px; overflow: hidden; }
+        .stat-bar-fill { background: linear-gradient(90deg, #ff7e5f, #feb47b); height: 100%; width: 0; transition: width 1s; }
+        .move-box { background: #f0f2f5; color: #444; padding: 10px; border-radius: 12px; font-weight: 600; font-size: 0.8rem; }
+
+        @media (max-width: 992px) { .poke-grid { grid-template-columns: repeat(3, 1fr); } }
+    </style>
+</head>
+<body>
+
+    <div class="header-area">
+        <h1>ALOLA: ECLIPSE</h1>
+        <p>DEFENSA DIMENSIONAL</p>
+    </div>
+
+    <div class="teams-wrapper">
+        
+        <div class="team-section">
+            <div class="team-title" style="color: var(--fuego);">🔥 TEAM INCINEROAR</div>
+            <div class="poke-grid" id="alola-fuego"></div>
+        </div>
+
+        <div class="team-section">
+            <div class="team-title" style="color: var(--agua);">💧 TEAM PRIMARINA</div>
+            <div class="poke-grid" id="alola-agua"></div>
+        </div>
+
+        <div class="team-section">
+            <div class="team-title" style="color: var(--planta);">🌿 TEAM DECIDUEYE</div>
+            <div class="poke-grid" id="alola-planta"></div>
+        </div>
+
+        <div class="team-section">
+            <div class="team-title" style="color: var(--comp);">🌌 TEAM COMPETITIVO</div>
+            <div class="poke-grid" id="alola-comp"></div>
+        </div>
+
+    </div>
+
+    <div id="pokeModal" class="modal" onclick="closeModal()">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modalImg" style="width:180px">
+            <h2 id="modalName" style="margin-bottom: 5px; font-weight: 800;"></h2>
+            <p id="modalType" style="color:#666; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;"></p>
+            <div class="stats-container" style="text-align: left;"></div>
+            <div class="moves-grid" id="modalMoves" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const alolaData = {
+            'alola-fuego': [
+                ['Incineroar', 727, 'Fuego/Sin.', '95,115,90,80,90,60', 'Lariat Oscuro, Envite Ígneo, Tajo Cruzado, Ida y Vuelta'],
+                ['Lycanroc-Dusk', 745, 'Roca', '75,117,65,55,65,110', 'Roca Afilada, A Bocajarro, Aceleroca, Triturar'],
+                ['Raichu-Alola', 26, 'Elec./Psiq.', '60,85,50,95,85,110', 'Rayo, Psíquico, Surf, Onda Trueno'],
+                ['Mudsdale', 750, 'Tierra', '100,125,100,55,85,35', 'Terremoto, Cuerpo Pesado, Fuerza Bruta, Roca Afilada'],
+                ['Vikavolt', 738, 'Bicho/Elec.', '77,70,90,145,75,43', 'Trueno, Zumbido, Energibola, Rayo'],
+                ['Mimikyu', 778, 'Fant./Hada', '55,90,80,50,105,96', 'Carantoña, Garra Umbría, Danza Espada, Sombra Vil']
+            ],
+            'alola-agua': [
+                ['Primarina', 730, 'Agua/Hada', '80,74,74,126,116,60', 'Aria Burbuja, Fuerza Lunar, Psíquico, Rayo Hielo'],
+                ['Marowak-Alola', 105, 'Fuego/Fant.', '60,80,110,50,80,45', 'Hueso Sombrío, envite Ígneo, Terremoto, Fuego Fatuo'],
+                ['Tsareena', 763, 'Planta', '72,120,98,50,98,72', 'Patada Tropical, Patada Salto Alta, Carantoña, Ida y Vuelta'],
+                ['Salazzle', 758, 'Veneno/Fue.', '68,64,60,111,60,117', 'Bomba Lodo, Lanzallamas, Tóxico, Maquinación'],
+                ['Araquanid', 752, 'Agua/Bicho', '68,70,92,50,132,42', 'Hidroariete, Chupavidas, Espejo de Agua, Rayo Hielo'],
+                ['Kommo-o', 784, 'Dragón/Lucha', '75,110,125,100,105,85', 'Fragor Escamas, A Bocajarro, Puño Drenaje, Danza Dragón']
+            ],
+            'alola-planta': [
+                ['Decidueye', 724, 'Planta/Fant.', '78,107,75,100,100,70', 'Puntada Sombría, Hoja Aguda, Pájaro Osado, Ida y Vuelta'],
+                ['Ninetales-Alola', 38, 'Hielo/Hada', '73,67,75,81,100,109', 'Velo Aurora, Liofilización, Fuerza Lunar, Ventisca'],
+                ['Toxapex', 748, 'Veneno/Agua', '50,63,152,53,142,35', 'Escaldar, Recuperación, Tóxico, Búnker'],
+                ['Minior', 774, 'Roca/Vol.', '60,100,60,100,60,120', 'Joyas de Luz, Acróbata, Terremoto, Rompecoraza'],
+                ['Bewear', 760, 'Normal/Lucha', '120,125,80,55,60,60', 'Machada, Retribución, Puño Hielo, Terremoto'],
+                ['Silvally', 773, 'Normal', '95,95,95,95,95,95', 'Multiataque, Garra Dragón, Triturar, Ida y Vuelta']
+            ],
+            'alola-comp': [
+                ['Tapu Koko', 785, 'Elec./Hada', '70,115,85,95,75,130', 'Rayo, Brillo Mágico, Ida y Vuelta, Mofa'],
+                ['Tapu Lele', 786, 'Psiq./Hada', '70,85,75,130,115,95', 'Psíquico, Fuerza Lunar, Onda Certera, Rayo'],
+                ['Nihilego', 793, 'Roca/Veneno', '109,53,47,127,131,103', 'Bomba Lodo, Joya de Luz, Rayo, Púas Tóxicas'],
+                ['Buzzwole', 794, 'Bicho/Lucha', '107,139,139,53,53,79', 'A Bocajarro, Chupavidas, Puño Hielo, Terremoto'],
+                ['Kartana', 798, 'Planta/Acero', '59,181,131,59,31,109', 'Hoja Aguda, Espada Santa, Cuerno Certero, Danza Espada'],
+                ['Lunala', 792, 'Psiq./Fant.', '137,113,89,137,107,97', 'Rayo Umbrío, Psíquico, Rayo Hielo, Paz Mental']
+            ]
+        };
+
+        function renderTeams() {
+            for (let teamId in alolaData) {
+                const grid = document.getElementById(teamId);
+                alolaData[teamId].forEach(p => {
+                    grid.innerHTML += `
+                        <div class="poke-card" onclick="openPoke('${p[0]}','${p[1]}','${p[2]}','${p[3]}','${p[4]}')">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p[1]}.png">
+                            <p style="font-weight:700; margin-top:10px">${p[0]}</p>
+                        </div>`;
+                });
+            }
+        }
+
+        function openPoke(nombre, id, tipo, stats, movs) {
+            document.getElementById('modalName').innerText = nombre;
+            document.getElementById('modalType').innerText = tipo;
+            document.getElementById('modalImg').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+            const labels = ['PS', 'ATQ', 'DEF', 'SPA', 'SPD', 'VEL'];
+            const values = stats.split(',');
+            const container = document.querySelector('.stats-container');
+            container.innerHTML = "";
+            values.forEach((v, i) => {
+                container.innerHTML += `
+                    <div style="margin-bottom:10px">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700">
+                            <span>${labels[i]}</span><span>${v}</span>
+                        </div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(v/200)*100}%"></div></div>
+                    </div>`;
+            });
+            const movesDiv = document.getElementById('modalMoves');
+            movesDiv.innerHTML = "";
+            movs.split(',').forEach(m => {
+                movesDiv.innerHTML += `<div class="move-box">☀ ${m.trim()}</div>`;
+            });
+            document.getElementById('pokeModal').style.display = "block";
+        }
+
+        function closeModal() { document.getElementById('pokeModal').style.display = "none"; }
+        renderTeams();
+    </script>
+</body>
+</html>

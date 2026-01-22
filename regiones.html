@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo base */
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: #0f172a; 
+            color: white; 
+            padding: 40px 20px; 
+            text-align: center;
+            min-height: 100vh;
+        }
+
+        h2 { 
+            color: #ff1f1f; 
+            margin-bottom: 10px; 
+            font-size: 2.5rem; 
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        p {
+            color: #94a3b8;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        /* Grid principal */
+        .regiones-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 25px; 
+            max-width: 1100px; 
+            margin: auto; 
+        }
+
+        /* Tarjeta de Región */
+        .region-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 40px 20px;
+            border-radius: 24px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efecto de brillo al pasar el mouse */
+        .region-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transition: 0.5s;
+        }
+
+        .region-card:hover::before {
+            left: 100%;
+        }
+
+        .region-card:hover {
+            background: rgba(255, 31, 31, 0.1);
+            border-color: #ff1f1f;
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(255, 31, 31, 0.2);
+        }
+
+        /* Numero de la región */
+        .region-number {
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            color: #94a3b8;
+        }
+
+        .region-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* Iconos representativos por generación */
+        .region-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+        }
+
+    </style>
+</head>
+<body>
+
+    <h2>Explorar Regiones</h2>
+    <p>Selecciona tu destino para ver los mejores equipos de cada región!!</p>
+
+    <div class="regiones-grid">
+        <a href="kanto.html" class="region-card">
+            <span class="region-number">GEN I</span>
+            <span class="region-icon">🌿</span>
+            <span class="region-name">Kanto</span>
+        </a>
+
+        <a href="johto.html" class="region-card">
+            <span class="region-number">GEN II</span>
+            <span class="region-icon">🔥</span>
+            <span class="region-name">Johto</span>
+        </a>
+
+        <a href="hoenn.html" class="region-card">
+            <span class="region-number">GEN III</span>
+            <span class="region-icon">💧</span>
+            <span class="region-name">Hoenn</span>
+        </a>
+
+        <a href="sinnoh.html" class="region-card">
+            <span class="region-number">GEN IV</span>
+            <span class="region-icon">🏔️</span>
+            <span class="region-name">Sinnoh</span>
+        </a>
+
+        <a href="unova.html" class="region-card">
+            <span class="region-number">GEN V</span>
+            <span class="region-icon">🏙️</span>
+            <span class="region-name">Unova</span>
+        </a>
+
+        <a href="kalos.html" class="region-card">
+            <span class="region-number">GEN VI</span>
+            <span class="region-icon">🏰</span>
+            <span class="region-name">Kalos</span>
+        </a>
+
+        <a href="alola.html" class="region-card">
+            <span class="region-number">GEN VII</span>
+            <span class="region-icon">🏝️</span>
+            <span class="region-name">Alola</span>
+        </a>
+
+        <a href="galar.html" class="region-card">
+            <span class="region-number">GEN VIII</span>
+            <span class="region-icon">🛡️</span>
+            <span class="region-name">Galar</span>
+        </a>
+
+        <a href="paldea.html" class="region-card">
+            <span class="region-number">GEN IX</span>
+            <span class="region-icon">🍇</span>
+            <span class="region-name">Paldea</span>
+        </a>
+    </div>
+
+</body>
+</html>

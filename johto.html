@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fuego: #e67e22; --agua: #3498db; --planta: #27ae60; --comp: #f1c40f;
+            --bg: #1a120b; --card-bg: #2d2417;
+            --johto-gold: #d4af37; --johto-silver: #bdc3c7;
+        }
+
+        body { 
+            font-family: 'Quicksand', sans-serif; background: var(--bg); color: #f5f5f5; margin: 0; padding: 20px;
+            background-image: 
+                linear-gradient(rgba(26, 18, 11, 0.9), rgba(26, 18, 11, 0.9)),
+                url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+        }
+
+        .header-area { text-align: center; margin-bottom: 50px; position: relative; }
+        .header-area h1 { 
+            font-family: 'Cinzel', serif; font-size: 3rem; margin: 0;
+            color: var(--johto-gold); text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            letter-spacing: 3px;
+        }
+        .header-area::after {
+            content: ""; display: block; width: 200px; height: 2px; 
+            background: linear-gradient(90deg, transparent, var(--johto-gold), transparent);
+            margin: 10px auto;
+        }
+
+        .team-section { 
+            background: var(--card-bg); border: 2px solid #3d3221;
+            border-radius: 15px; padding: 30px; margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .team-title { 
+            font-family: 'Cinzel', serif; font-size: 1.5rem; margin-bottom: 25px;
+            color: var(--johto-gold); border-left: 5px solid var(--johto-gold); padding-left: 15px;
+        }
+
+        .poke-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; 
+        }
+
+        .poke-card {
+            background: #3d3221; border-radius: 12px; padding: 15px;
+            transition: 0.4s; border: 1px solid #4d4231; text-align: center;
+        }
+        .poke-card:hover { 
+            transform: translateY(-8px); border-color: var(--johto-gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+        .poke-card img { width: 100%; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
+        .poke-card p { font-weight: 600; margin-top: 12px; color: #eee; text-transform: uppercase; font-size: 0.85rem; }
+
+        /* Modal Tradicional */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; 
+            width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background: #fdf5e6; color: #2d2417; margin: 5vh auto; padding: 40px; 
+            width: 90%; max-width: 420px; border-radius: 5px; 
+            border: 8px double var(--johto-gold);
+            text-align: center; position: relative; animation: slideIn 0.4s ease;
+        }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .close { position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; color: #2d2417; }
+
+        .stat-bar-bg { background: #dcd6c8; height: 10px; border-radius: 5px; margin-top: 4px; }
+        .stat-bar-fill { background: var(--johto-gold); height: 100%; width: 0; border-radius: 5px; transition: width 1s; }
+        
+        .moves-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; }
+        .move-box { 
+            background: #2d2417; color: #fdf5e6; padding: 10px; border-radius: 4px; 
+            font-size: 0.75rem; font-family: 'Cinzel', serif;
+        }
+
+        @media (max-width: 600px) { .poke-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+
+    <div class="header-area">
+        <h1>JOHTO: CAMINO DORADO</h1>
+        <p style="color: var(--johto-silver); letter-spacing: 2px;">Senda al monte plateado</p>
+    </div>
+
+    <div id="wrapper"></div>
+
+    <div id="pokeModal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img id="modalImg" style="width:160px; margin-bottom: 10px;">
+            <h2 id="modalName" style="font-family: 'Cinzel'; margin: 0; color: #b8860b;"></h2>
+            <p id="modalType" style="font-weight: bold; font-size: 0.75rem; color: #8b4513; margin-bottom: 20px;"></p>
+            
+            <div id="modalStats" style="text-align: left;"></div>
+            <div class="moves-grid" id="modalMoves"></div>
+        </div>
+    </div>
+
+    <script>
+        const johtoData = [
+            { title: "TEAM TYPHLOSION", color: "var(--fuego)", pokes: [
+                ['Typhlosion', 157, 'FUEGO', '78,84,78,109,85,100', 'Estallido, Lanzallamas, Pu?o Trueno, Rapidez'],
+                ['Ampharos', 181, 'EL谷CTRICO', '90,75,85,115,90,55', 'Rayo, Joya de Luz, Onda Trueno, Pu?o Fuego'],
+                ['Heracross', 214, 'BICHO / LUCHA', '80,125,75,40,95,85', 'Megacuerno, Demolici車n, Avalancha, Contraataque'],
+                ['Quagsire', 195, 'AGUA / TIERRA', '95,85,85,65,65,35', 'Terremoto, Surf, Rayo Hielo, Amnesia'],
+                ['Espeon', 196, 'PS赤QUICO', '65,65,60,130,95,110', 'Ps赤quico, Bola Sombra, Sol Matinal, Reflejo'],
+                ['Crobat', 169, 'VENENO / VOLADOR', '85,90,80,70,80,130', 'Veneno X, Tajo A谷reo, Mordisco, Vuelo']
+            ]},
+            { title: "TEAM FERALIGATR", color: "var(--agua)", pokes: [
+                ['Feraligatr', 160, 'AGUA', '85,105,100,79,83,78', 'Cascada, Triturar, Pu?o Hielo, Danza Espada'],
+                ['Arcanine', 59, 'FUEGO', '90,110,80,100,80,95', 'Envite 赤gneo, Vel. Extrema, Triturar, Colmillo 赤gneo'],
+                ['Tyranitar', 248, 'ROCA / SINIESTRO', '100,134,110,95,100,61', 'Roca Afilada, Triturar, Terremoto, Danza Drag車n'],
+                ['Skarmory', 227, 'ACERO / VOLADOR', '65,80,140,40,70,70', 'Pico Taladro, Ala de Acero, P迆as, Remolino'],
+                ['Lanturn', 171, 'AGUA / EL谷CT.', '125,58,58,76,76,67', 'Surf, Rayo, Rayo Confuso, Onda Trueno'],
+                ['Exeggutor', 103, 'PLANTA / PS赤Q.', '95,95,85,125,65,55', 'Ps赤quico, Bomba Lodo, Gigadrenado, Somn赤fero']
+            ]},
+            { title: "TEAM MEGANIUM", color: "var(--planta)", pokes: [
+                ['Meganium', 154, 'PLANTA', '80,82,100,83,100,80', 'Gigadrenado, Hoja M芍gica, Pantalla Luz, Reflejo'],
+                ['Houndoom', 229, 'SINIESTRO / FUEGO', '75,90,50,110,80,95', 'Lanzallamas, Pulso Umbr赤o, Maquinaci車n, Colmillo 赤gneo'],
+                ['Kingdra', 230, 'AGUA / DRAG車N', '75,95,95,95,95,85', 'Pulso Drag車n, Surf, Rayo Hielo, Danza Lluvia'],
+                ['Scizor', 212, 'BICHO / ACERO', '70,130,100,55,80,65', 'Pu?o Bala, Tijera X, Danza Espada, Respiro'],
+                ['Mamoswine', 473, 'HIELO / TIERRA', '110,130,80,70,60,80', 'Terremoto, Canto Helado, Alud, Trampa Rocas'],
+                ['Donphan', 232, 'TIERRA', '90,120,120,60,60,50', 'Terremoto, Giro R芍pido, Desarme, Canto Helado']
+            ]},
+            { title: "TEAM COMPETITIVO", color: "var(--comp)", pokes: [
+                ['Suicune', 245, 'AGUA', '100,75,115,90,115,85', 'Surf, Rayo Hielo, Paz Mental, Descanso'],
+                ['Blissey', 242, 'NORMAL', '255,10,10,75,135,55', 'Mov. S赤smico, T車xico, Amortiguador, Campana Cura'],
+                ['Steelix', 208, 'ACERO / TIERRA', '75,85,200,55,65,30', 'Terremoto, Giro Bola, Trampa Rocas, Rugido'],
+                ['Umbreon', 197, 'SINIESTRO', '95,65,110,60,130,65', 'Juego Sucio, Deseo, Protecci車n, T車xico'],
+                ['Dragonite', 149, 'DRAG車N / VOLADOR', '91,134,95,100,100,80', 'Danza Drag車n, Enfado, Pu?o Fuego, Vel. Extrema'],
+                ['Raikou', 243, 'EL谷CTRICO', '90,85,75,115,100,115', 'Rayo, Paz Mental, Bola Sombra, Voltiocambio']
+            ]}
+        ];
+
+        function render() {
+            const container = document.getElementById('wrapper');
+            johtoData.forEach(team => {
+                let html = `
+                <div class="team-section">
+                    <div class="team-title">${team.title}</div>
+                    <div class="poke-grid">`;
+                team.pokes.forEach(p => {
+                    html += `
+                    <div class="poke-card" onclick="openPoke('${p[0]}','${p[1]}','${p[2]}','${p[3]}','${p[4]}')">
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p[1]}.png">
+                        <p>${p[0]}</p>
+                    </div>`;
+                });
+                html += `</div></div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        function openPoke(nombre, id, tipo, stats, movs) {
+            document.getElementById('modalName').innerText = nombre;
+            document.getElementById('modalType').innerText = tipo;
+            document.getElementById('modalImg').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+            
+            const labels = ['PS', 'ATQ', 'DEF', 'SPA', 'SPD', 'VEL'];
+            const values = stats.split(',');
+            const statsDiv = document.getElementById('modalStats');
+            statsDiv.innerHTML = "";
+            values.forEach((v, i) => {
+                statsDiv.innerHTML += `
+                    <div style="margin-bottom:8px">
+                        <div style="display:flex; justify-content:space-between; font-size:0.7rem; font-weight:bold; color:#5d4037">
+                            <span>${labels[i]}</span><span>${v}</span>
+                        </div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(v/255)*100}%"></div></div>
+                    </div>`;
+            });
+
+            const movesDiv = document.getElementById('modalMoves');
+            movesDiv.innerHTML = "";
+            movs.split(',').forEach(m => { movesDiv.innerHTML += `<div class="move-box">${m.trim()}</div>`; });
+
+            document.getElementById('pokeModal').style.display = "block";
+        }
+
+        function closeModal() { document.getElementById('pokeModal').style.display = "none"; }
+        render();
+    </script>
+</body>
+</html>

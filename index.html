@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>PokeMaster - Gabo Edition</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #ff1f1f;      /* Rojo Pokéball */
+            --accent: #00d4ff;       /* Cian Eléctrico */
+            --dark-bg: #0f172a;      /* Azul muy oscuro */
+            --nav-bg: rgba(15, 23, 42, 0.9);
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Reset de estilos */
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark-bg);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Evita doble scroll con el iframe */
+        }
+
+        /* Encabezado con degradado y sombra */
+        header {
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #ff1f1f 0%, #8b0000 100%);
+            box-shadow: 0 4px 25px rgba(255, 0, 0, 0.4);
+            z-index: 10;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header h1 { 
+            font-weight: 800; 
+            letter-spacing: 3px; 
+            text-transform: uppercase; 
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Barra de navegación flotante tipo Glassmorphism */
+        nav {
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: center;
+            padding: 12px;
+            gap: 10px;
+            border-bottom: 1px solid var(--glass);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #94a3b8;
+            font-weight: 600;
+            padding: 10px 22px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Efecto cuando el link está activo o se pasa el mouse */
+        nav a:hover, nav a.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 20px rgba(255, 31, 31, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Estilo especial para el botón de Comunidad */
+        nav a[href="comunidad.jsp"]:hover, nav a[href="comunidad.jsp"].active {
+            background: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+        }
+
+        /* Contenedor del Iframe */
+        .content-area {
+            flex-grow: 1;
+            position: relative;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+
+        iframe { 
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+            background: transparent;
+        }
+
+        /* Footer minimalista */
+        footer {
+            background: #020617;
+            color: #475569;
+            text-align: center;
+            padding: 8px;
+            font-size: 0.75rem;
+            border-top: 1px solid var(--glass);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>POKÉMASTERS 🏆</h1>
+    </header>
+
+    <nav id="mainNav">
+        <a href="Inicio.html" target="centro" class="active">Inicio</a>
+        <a href="regiones.html" target="centro">Regiones Oficiales</a>
+        <a href="comunidad.jsp" target="centro">Comunidad</a>
+        <a href="creacion.html" target="centro">Compartir Build</a>
+    </nav>
+
+    <main class="content-area">
+        <iframe src="Inicio.html" name="centro" id="centroFrame"></iframe>
+    </main>
+
+    <footer>
+        Desarrollado por Gabriel Rojas | Proyecto Programacion web 
+    </footer>
+
+    <script>
+        
+        const links = document.querySelectorAll('nav a');
+        
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                
+                links.forEach(l => l.classList.remove('active'));
+               
+                link.classList.add('active');
+            });
+        });
+
+     
+        document.getElementById('centroFrame').onload = function() {
+            window.scrollTo(0, 0);
+        };
+    </script>
+
+</body>
+</html>

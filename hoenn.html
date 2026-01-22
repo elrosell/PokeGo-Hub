@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Exo+2:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fuego: #ff7675; --agua: #74b9ff; --planta: #55efc4; --comp: #a29bfe;
+            --bg: #04141d; --card-bg: rgba(22, 33, 62, 0.8);
+            --hoenn-emerald: #00fa9a; --ocean-blue: #0984e3;
+        }
+
+        body { 
+            font-family: 'Exo 2', sans-serif; background: var(--bg); color: white; margin: 0; padding: 20px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 250, 154, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(9, 132, 227, 0.05) 0%, transparent 40%);
+            min-height: 100vh;
+        }
+
+        .header-area { text-align: center; margin-bottom: 60px; }
+        .header-area h1 { 
+            font-family: 'Montserrat', sans-serif; font-size: 3rem; font-weight: 900; margin: 0;
+            background: linear-gradient(135deg, #00fa9a 0%, #0984e3 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: -1px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+        }
+        .header-area p { font-size: 0.9rem; letter-spacing: 6px; color: rgba(255,255,255,0.5); text-transform: uppercase; margin-top: 10px; }
+
+        .team-section { 
+            background: var(--card-bg); backdrop-filter: blur(10px);
+            border-radius: 40px; padding: 40px; margin-bottom: 50px;
+            border: 1px solid rgba(0, 250, 154, 0.1);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        .team-title { 
+            font-family: 'Montserrat', sans-serif; font-size: 1.6rem; margin-bottom: 30px;
+            display: flex; align-items: center; gap: 15px; font-weight: 700;
+        }
+        .team-title i { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 15px currentColor; }
+
+        .poke-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; 
+        }
+
+        .poke-card {
+            background: rgba(255,255,255,0.02); border-radius: 30px; padding: 20px;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(255,255,255,0.05); text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .poke-card::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
+            transform: translateX(-100%); transition: 0.6s;
+        }
+        .poke-card:hover { 
+            transform: translateY(-15px) scale(1.02); 
+            background: rgba(255,255,255,0.08);
+            border-color: var(--hoenn-emerald);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        .poke-card:hover::before { transform: translateX(100%); }
+        .poke-card img { width: 100%; filter: drop-shadow(0 15px 20px rgba(0,0,0,0.4)); }
+        .poke-card p { font-weight: 700; margin-top: 15px; font-size: 0.9rem; color: #fff; letter-spacing: 0.5px; }
+
+        /* Modal Ultra-Moderno */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; 
+            width: 100%; height: 100%; background: rgba(4, 20, 29, 0.95); backdrop-filter: blur(20px);
+        }
+        .modal-content {
+            background: linear-gradient(180deg, #16213e 0%, #0b121e 100%); 
+            margin: 5vh auto; padding: 50px 40px; width: 90%; max-width: 450px; 
+            border-radius: 50px; border: 1px solid rgba(0, 250, 154, 0.3);
+            text-align: center; position: relative; box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+        }
+        .close { position: absolute; top: 30px; right: 35px; font-size: 30px; cursor: pointer; opacity: 0.5; transition: 0.3s; }
+        .close:hover { opacity: 1; color: var(--hoenn-emerald); }
+
+        .stat-bar-bg { background: rgba(255,255,255,0.05); height: 8px; border-radius: 10px; margin-top: 6px; overflow: hidden; }
+        .stat-bar-fill { background: linear-gradient(90deg, #0984e3, #00fa9a); height: 100%; width: 0; transition: width 1.2s cubic-bezier(0.1, 0.5, 0.2, 1); }
+        
+        .moves-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 30px; }
+        .move-box { 
+            background: rgba(255,255,255,0.03); padding: 12px; border-radius: 15px; 
+            font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.05); 
+            font-weight: 600; color: var(--hoenn-emerald);
+        }
+
+        @media (max-width: 600px) { 
+            .poke-grid { grid-template-columns: repeat(2, 1fr); }
+            .header-area h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-area">
+        <h1>HOENN ESMERALDA</h1>
+        <p>Camino entre la tierra, cielo y mar</p>
+    </div>
+
+    <div id="wrapper"></div>
+
+    <div id="pokeModal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img id="modalImg" style="width:200px; margin-top: -100px; filter: drop-shadow(0 25px 30px rgba(0,0,0,0.7));">
+            <h2 id="modalName" style="font-family: 'Montserrat'; font-size: 2.2rem; margin: 20px 0 5px 0;"></h2>
+            <div id="modalType" style="font-weight: bold; color: var(--hoenn-emerald); margin-bottom: 30px; letter-spacing: 2px; font-size: 0.8rem; opacity: 0.8;"></div>
+            
+            <div id="modalStats" style="text-align: left;"></div>
+            <div class="moves-grid" id="modalMoves"></div>
+        </div>
+    </div>
+
+    <script>
+        const hoennData = [
+            { title: "TEAM SCEPTILE", color: "var(--planta)", pokes: [
+                ['Sceptile', 254, 'PLANTA', '70,85,65,105,85,120', 'Hoja Aguda, Garra Drag車n, Trueno, Gigadrenado'],
+                ['Gardevoir', 282, 'PS赤QUICO', '68,65,65,125,115,80', 'Ps赤quico, Rayo, Paz Mental, Fuego Fatuo'],
+                ['Aggron', 306, 'ACERO / ROCA', '70,110,180,60,60,50', 'Terremoto, Roca Afilada, Cola F谷rrea, Onda Trueno'],
+                ['Manectric', 310, 'EL谷CTRICO', '70,75,60,105,60,105', 'Rayo, Mordisco, Onda Voltio, Rugido'],
+                ['Flygon', 330, 'TIERRA / DRAG車N', '80,100,80,80,80,100', 'Terremoto, Garra Drag車n, Lanzallamas, Vuelo'],
+                ['Crawdaunt', 342, 'AGUA / SINIESTRO', '63,120,85,90,55,55', 'Martillazo, Triturar, Danza Espada, Rayo Hielo']
+            ]},
+            { title: "TEAM BLAZIKEN", color: "var(--fuego)", pokes: [
+                ['Blaziken', 257, 'FUEGO / LUCHA', '80,120,70,110,70,80', 'Patada 赤gnea, Gancho Alto, Sofoco, Avalancha'],
+                ['Ludicolo', 272, 'AGUA / PLANTA', '80,70,70,90,100,70', 'Surf, Gigadrenado, Rayo Hielo, Danza Lluvia'],
+                ['Metagross', 376, 'ACERO / PS赤Q.', '80,135,130,95,90,70', 'Pu?o Meteoro, Ps赤quico, Terremoto, Pu?o Sombra'],
+                ['Salamence', 373, 'DRAG車N / VOLADOR', '95,135,80,110,80,100', 'Garra Drag車n, Golpe Cuerpo, Lanzallamas, Hidrobomba'],
+                ['Altaria', 334, 'DRAG車N / VOLADOR', '75,70,90,70,105,80', 'Canto Drag車n, Vuelo, Terremoto, Alivio'],
+                ['Milotic', 350, 'AGUA', '95,60,79,100,125,81', 'Surf, Rayo Hielo, Recuperaci車n, T車xico']
+            ]},
+            { title: "TEAM SWAMPERT", color: "var(--agua)", pokes: [
+                ['Swampert', 260, 'AGUA / TIERRA', '100,110,90,85,90,60', 'Terremoto, Surf, Rayo Hielo, Esfuerzo'],
+                ['Breloom', 286, 'PLANTA / LUCHA', '60,130,80,60,60,70', 'Espora, Gancho Alto, Recurrente, Bomba Lodo'],
+                ['Torkoal', 324, 'FUEGO', '70,85,140,85,70,20', 'Lanzallamas, Golpe Cuerpo, Protecci車n, Maldici車n'],
+                ['Absol', 359, 'SINIESTRO', '65,130,60,75,60,75', 'Tajo Umbr赤o, Danza Espada, Golpe Bajo, Rayo'],
+                ['Walrein', 365, 'HIELO / AGUA', '110,80,90,95,90,65', 'Rayo Hielo, Surf, Triturar, Descanso'],
+                ['Slaking', 289, 'NORMAL', '150,160,100,95,65,100', 'Retribuci車n, Terremoto, Bola Sombra, Hiperrayo']
+            ]},
+            { title: "TEAM COMPETITIVO", color: "var(--comp)", pokes: [
+                ['Latios', 381, 'DRAG車N / PS赤Q.', '80,90,80,130,110,110', 'Resplandor, Ps赤quico, Rayo, Paz Mental'],
+                ['Claydol', 344, 'TIER. / PS赤Q.', '60,70,105,70,120,75', 'Giro R芍pido, Terremoto, Ps赤quico, Pantalla Luz'],
+                ['Armaldo', 348, 'ROCA / BICHO', '75,125,100,70,80,45', 'Poder Pasado, Danza Espada, Terremoto, Tijera X'],
+                ['Exploud', 295, 'NORMAL', '104,91,63,91,73,68', 'Alboroto, Lanzallamas, Rayo Hielo, Terremoto'],
+                ['Wailord', 321, 'AGUA', '170,90,45,90,45,60', 'Salpicar, Hidrobomba, Ventisca, Terremoto'],
+                ['Dusclops', 356, 'FANTASMA', '40,70,130,60,130,25', 'Pu?o Sombra, Fuego Fatuo, Rayo Confuso, Niebla']
+            ]}
+        ];
+
+        function render() {
+            const container = document.getElementById('wrapper');
+            hoennData.forEach(team => {
+                let html = `
+                <div class="team-section">
+                    <div class="team-title"><i style="color:${team.color}; background:${team.color}"></i> ${team.title}</div>
+                    <div class="poke-grid">`;
+                team.pokes.forEach(p => {
+                    html += `
+                    <div class="poke-card" onclick="openPoke('${p[0]}','${p[1]}','${p[2]}','${p[3]}','${p[4]}')">
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p[1]}.png">
+                        <p>${p[0]}</p>
+                    </div>`;
+                });
+                html += `</div></div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        function openPoke(nombre, id, tipo, stats, movs) {
+            document.getElementById('modalName').innerText = nombre;
+            document.getElementById('modalType').innerText = tipo;
+            document.getElementById('modalImg').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+            
+            const labels = ['HP', 'ATK', 'DEF', 'SPA', 'SPD', 'SPD'];
+            const values = stats.split(',');
+            const statsDiv = document.getElementById('modalStats');
+            statsDiv.innerHTML = "";
+            values.forEach((v, i) => {
+                statsDiv.innerHTML += `
+                    <div style="margin-bottom:12px">
+                        <div style="display:flex; justify-content:space-between; font-size:0.7rem; font-weight:bold; letter-spacing:1px; opacity: 0.6">
+                            <span>${labels[i]}</span><span>${v}</span>
+                        </div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(v/200)*100}%"></div></div>
+                    </div>`;
+            });
+
+            const movesDiv = document.getElementById('modalMoves');
+            movesDiv.innerHTML = "";
+            movs.split(',').forEach(m => { movesDiv.innerHTML += `<div class="move-box">${m.trim()}</div>`; });
+
+            document.getElementById('pokeModal').style.display = "block";
+        }
+
+        function closeModal() { document.getElementById('pokeModal').style.display = "none"; }
+        render();
+    </script>
+</body>
+</html>
