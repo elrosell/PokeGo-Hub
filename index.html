@@ -1,159 +1,91 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>PokeMaster - Gabo Edition</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --primary: #ff1f1f;      /* Rojo Pokéball */
-            --accent: #00d4ff;       /* Cian Eléctrico */
-            --dark-bg: #0f172a;      /* Azul muy oscuro */
-            --nav-bg: rgba(15, 23, 42, 0.9);
-            --glass: rgba(255, 255, 255, 0.05);
-        }
-
-        /* Reset de estilos */
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--dark-bg);
-            color: white;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden; /* Evita doble scroll con el iframe */
-        }
-
-        /* Encabezado con degradado y sombra */
-        header {
-            padding: 20px;
-            text-align: center;
-            background: linear-gradient(135deg, #ff1f1f 0%, #8b0000 100%);
-            box-shadow: 0 4px 25px rgba(255, 0, 0, 0.4);
-            z-index: 10;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        header h1 { 
-            font-weight: 800; 
-            letter-spacing: 3px; 
-            text-transform: uppercase; 
-            font-size: 1.8rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        /* Barra de navegación flotante tipo Glassmorphism */
-        nav {
-            background: var(--nav-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            display: flex;
-            justify-content: center;
-            padding: 12px;
-            gap: 10px;
-            border-bottom: 1px solid var(--glass);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #94a3b8;
-            font-weight: 600;
-            padding: 10px 22px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* Efecto cuando el link está activo o se pasa el mouse */
-        nav a:hover, nav a.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 0 20px rgba(255, 31, 31, 0.6);
-            transform: translateY(-2px);
-        }
-
-        /* Estilo especial para el botón de Comunidad */
-        nav a[href="comunidad.jsp"]:hover, nav a[href="comunidad.jsp"].active {
-            background: var(--accent);
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
-        }
-
-        /* Contenedor del Iframe */
-        .content-area {
-            flex-grow: 1;
-            position: relative;
-            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
-        }
-
-        iframe { 
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%; 
-            height: 100%; 
-            border: none; 
-            background: transparent;
-        }
-
-        /* Footer minimalista */
-        footer {
-            background: #020617;
-            color: #475569;
-            text-align: center;
-            padding: 8px;
-            font-size: 0.75rem;
-            border-top: 1px solid var(--glass);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PokéGO Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <header class="header">
+    <h1>🔥 PokéGO Hub</h1>
+    <p>Tu centro de operaciones para raids, IVs, eventos y decisiones de stardust.</p>
+  </header>
 
-    <header>
-        <h1>POKÉMASTERS 🏆</h1>
-    </header>
+  <nav class="nav">
+    <a class="active" href="index.html">Inicio</a>
+    <a href="iv-calculator.jsp">Calculadora IV</a>
+    <a href="raid-counters.jsp">Counters</a>
+    <a href="events.jsp">Eventos</a>
+    <a href="stardust-planner.jsp">Stardust</a>
+    <a href="evolutions.jsp">Evoluciones</a>
+    <a href="admin.jsp">Admin Panel</a>
+  </nav>
 
-    <nav id="mainNav">
-        <a href="Inicio.html" target="centro" class="active">Inicio</a>
-        <a href="regiones.html" target="centro">Regiones Oficiales</a>
-        <a href="comunidad.jsp" target="centro">Comunidad</a>
-        <a href="creacion.html" target="centro">Compartir Build</a>
-    </nav>
+  <main class="container">
+    <section class="hero">
+      <div>
+        <h2>Optimiza tu equipo sin perder stardust</h2>
+        <p>
+          PokéGO Hub reúne las herramientas esenciales de un entrenador competitivo: calcula IVs,
+          busca counters para raids, planea eventos y toma decisiones rápidas para PvP o PvE.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="iv-calculator.jsp">Empezar con IVs</a>
+          <a class="button secondary" href="events.jsp">Ver próximos eventos</a>
+        </div>
+      </div>
+      <div class="card">
+        <span class="tag">MVP Roadmap</span>
+        <h3>¿Qué puedes hacer hoy?</h3>
+        <p>
+          Usa el panel de administrador para cargar eventos y counters. Todo queda guardado
+          localmente para probar la app sin depender de un backend.
+        </p>
+        <p class="notice">Tip: prueba la búsqueda de counters por jefe para ver top 5 recomendados.</p>
+      </div>
+    </section>
 
-    <main class="content-area">
-        <iframe src="Inicio.html" name="centro" id="centroFrame"></iframe>
-    </main>
+    <h2 class="section-title">Herramientas disponibles</h2>
+    <div class="card-grid">
+      <a class="card" href="iv-calculator.jsp">
+        <span class="tag">MVP #1</span>
+        <h3>🧮 Calculadora de IVs</h3>
+        <p>Ingresa CP, PS y stardust para obtener un score inmediato y una recomendación.</p>
+      </a>
+      <a class="card" href="raid-counters.jsp">
+        <span class="tag">MVP #2</span>
+        <h3>⚔️ Buscador de Counters</h3>
+        <p>Elige un jefe de raid y obtén los mejores counters con alternativas sin legendarios.</p>
+      </a>
+      <a class="card" href="events.jsp">
+        <span class="tag">MVP #3</span>
+        <h3>📅 Calendario de Eventos</h3>
+        <p>Filtra por tipo de evento y revisa tips estratégicos antes del inicio.</p>
+      </a>
+      <a class="card" href="stardust-planner.jsp">
+        <span class="tag">MVP #4</span>
+        <h3>💸 Optimizador de Stardust</h3>
+        <p>Define tu objetivo PvP o PvE y obtén prioridades de inversión.</p>
+      </a>
+      <a class="card" href="evolutions.jsp">
+        <span class="tag">MVP #5</span>
+        <h3>🧬 Guía de Evoluciones</h3>
+        <p>Consulta cadenas de evolución y requisitos especiales en segundos.</p>
+      </a>
+      <a class="card" href="admin.jsp">
+        <span class="tag">Admin</span>
+        <h3>🛠️ Panel de Administración</h3>
+        <p>Agrega eventos y counters para simular el flujo completo de la app.</p>
+      </a>
+    </div>
+  </main>
 
-    <footer>
-        Desarrollado por Gabriel Rojas | Proyecto Programacion web 
-    </footer>
-
-    <script>
-        
-        const links = document.querySelectorAll('nav a');
-        
-        links.forEach(link => {
-            link.addEventListener('click', () => {
-                
-                links.forEach(l => l.classList.remove('active'));
-               
-                link.classList.add('active');
-            });
-        });
-
-     
-        document.getElementById('centroFrame').onload = function() {
-            window.scrollTo(0, 0);
-        };
-    </script>
-
+  <footer class="footer">
+    Desarrollado por Delgado Cerros Rodrigo Daniel · Proyecto PokéGO Hub
+  </footer>
 </body>
 </html>
