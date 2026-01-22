@@ -33,7 +33,8 @@
       <form class="form" id="ivForm">
         <div>
           <label for="pokemon">Pokémon</label>
-          <input id="pokemon" name="pokemon" placeholder="Ej. Azumarill" required>
+          <input id="pokemon" name="pokemon" placeholder="Ej. Azumarill" list="pokemonList" required>
+          <datalist id="pokemonList"></datalist>
         </div>
         <div>
           <label for="cp">PC (CP)</label>
@@ -60,6 +61,7 @@
         <p><strong>% IV:</strong> <span id="resultIv"></span></p>
         <p><strong>Recomendación:</strong> <span id="resultRecommendation"></span></p>
         <p id="resultMessage"></p>
+        <div class="stat-grid" id="statGrid"></div>
       </div>
 
       <div class="alert">
@@ -74,8 +76,37 @@
   <script>
     const form = document.getElementById('ivForm');
     const resultBox = document.getElementById('ivResult');
+    const statGrid = document.getElementById('statGrid');
+    const pokemonList = document.getElementById('pokemonList');
 
-    form.addEventListener('submit', (event) => {
+    async function loadPokemonList() {
+      try {
+        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+        const data = await response.json();
+        data.results.forEach((pokemon) => {
+          const option = document.createElement('option');
+          option.value = pokemon.name;
+          pokemonList.appendChild(option);
+        });
+      } catch (error) {
+        console.warn('No se pudo cargar la lista de Pokémon.', error);
+      }
+    }
+
+    function renderStats(stats) {
+      statGrid.innerHTML = '';
+      if (!stats) {
+        return;
+      }
+      Object.entries(stats).forEach(([label, value]) => {
+        const card = document.createElement('div');
+        card.className = 'stat-card';
+        card.innerHTML = `<strong>${value}</strong><span>${label}</span>`;
+        statGrid.appendChild(card);
+      });
+    }
+
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
 
       const pokemon = document.getElementById('pokemon').value.trim();
@@ -84,7 +115,25 @@
       const stardust = Number(document.getElementById('stardust').value);
       const level = Number(document.getElementById('level').value);
 
-      const baseScore = ((cp * 1.15) + (hp * 2.2)) / Math.max(stardust, 10) * 120;
+      let apiStats = null;
+      try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.toLowerCase()}`);
+        if (response.ok) {
+          const data = await response.json();
+          apiStats = {
+            Ataque: data.stats.find((stat) => stat.stat.name === 'attack')?.base_stat || 0,
+            Defensa: data.stats.find((stat) => stat.stat.name === 'defense')?.base_stat || 0,
+            Aguante: data.stats.find((stat) => stat.stat.name === 'hp')?.base_stat || 0
+          };
+        }
+      } catch (error) {
+        console.warn('No se pudo cargar stats desde la API.', error);
+      }
+
+      const statsBonus = apiStats
+        ? (apiStats.Ataque * 0.3 + apiStats.Defensa * 0.2 + apiStats.Aguante * 0.2)
+        : 0;
+      const baseScore = ((cp * 1.15) + (hp * 2.2) + statsBonus) / Math.max(stardust, 10) * 120;
       const levelBonus = level ? Math.min(level, 50) * 0.4 : 0;
       const rawScore = Math.min(100, Math.max(10, baseScore + levelBonus));
 
@@ -112,9 +161,12 @@
         : `${Math.round(rawScore)}%`;
       document.getElementById('resultRecommendation').textContent = recommendation;
       document.getElementById('resultMessage').textContent = message;
+      renderStats(apiStats);
 
       resultBox.hidden = false;
     });
+
+    loadPokemonList();
   </script>
 </body>
 </html>

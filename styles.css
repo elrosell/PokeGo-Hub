@@ -280,6 +280,27 @@ a {
   margin-top: 14px;
 }
 
+.stat-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  margin-top: 16px;
+}
+
+.stat-card {
+  background: rgba(15, 23, 42, 0.7);
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  text-align: center;
+}
+
+.stat-card span {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 @media (max-width: 600px) {
   .header h1 {
     font-size: 1.8rem;

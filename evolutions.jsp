@@ -32,7 +32,8 @@
       <div class="form">
         <div>
           <label for="search">Nombre del Pokémon</label>
-          <input id="search" placeholder="Ej. Eevee, Magikarp">
+          <input id="search" placeholder="Ej. Eevee, Magikarp" list="pokemonList">
+          <datalist id="pokemonList"></datalist>
         </div>
       </div>
     </section>
@@ -46,7 +47,7 @@
   <footer class="footer">Desarrollado por Delgado Cerros Rodrigo Daniel · PokéGO Hub</footer>
 
   <script>
-    const evolutions = [
+    const fallbackEvolutions = [
       {
         name: 'Eevee',
         evolvesTo: 'Vaporeon / Jolteon / Flareon / Espeon / Umbreon / Leafeon / Glaceon / Sylveon',
@@ -75,10 +76,59 @@
 
     const list = document.getElementById('evolutionList');
     const search = document.getElementById('search');
+    const pokemonList = document.getElementById('pokemonList');
 
-    function renderList(term = '') {
+    async function loadPokemonList() {
+      try {
+        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+        const data = await response.json();
+        data.results.forEach((pokemon) => {
+          const option = document.createElement('option');
+          option.value = pokemon.name;
+          pokemonList.appendChild(option);
+        });
+      } catch (error) {
+        console.warn('No se pudo cargar la lista de Pokémon.', error);
+      }
+    }
+
+    function parseEvolutionChain(chain, list = []) {
+      list.push(chain.species.name);
+      chain.evolves_to.forEach((next) => parseEvolutionChain(next, list));
+      return list;
+    }
+
+    async function renderFromApi(term) {
+      if (!term) {
+        return false;
+      }
+      try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${term.toLowerCase()}`);
+        if (!response.ok) {
+          return false;
+        }
+        const species = await response.json();
+        const chainResponse = await fetch(species.evolution_chain.url);
+        const chainData = await chainResponse.json();
+        const chainList = parseEvolutionChain(chainData.chain);
+        list.innerHTML = `
+          <div class="list-item">
+            <strong>${species.name}</strong><br>
+            <span class="badge">Evoluciona a: ${chainList.join(' → ')}</span>
+            <p><strong>Requisitos:</strong> Revisa caramelos/items específicos en el juego.</p>
+            <p class="highlight">Advertencia: espera eventos con movimientos exclusivos.</p>
+          </div>
+        `;
+        return true;
+      } catch (error) {
+        console.warn('No se pudo cargar la evolución desde la API.', error);
+        return false;
+      }
+    }
+
+    function renderFallback(term = '') {
       list.innerHTML = '';
-      const filtered = evolutions.filter((pokemon) => pokemon.name.toLowerCase().includes(term.toLowerCase()));
+      const filtered = fallbackEvolutions.filter((pokemon) => pokemon.name.toLowerCase().includes(term.toLowerCase()));
 
       filtered.forEach((pokemon) => {
         const item = document.createElement('div');
@@ -97,8 +147,16 @@
       }
     }
 
-    search.addEventListener('input', (event) => renderList(event.target.value));
-    renderList();
+    search.addEventListener('input', async (event) => {
+      const term = event.target.value;
+      const rendered = await renderFromApi(term);
+      if (!rendered) {
+        renderFallback(term);
+      }
+    });
+
+    renderFallback();
+    loadPokemonList();
   </script>
 </body>
 </html>

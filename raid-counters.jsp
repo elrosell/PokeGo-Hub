@@ -102,16 +102,28 @@
     };
 
     const storedCounters = JSON.parse(localStorage.getItem('pokegoCounters') || '[]');
+    let apiPokemonList = [];
 
     const bossSelect = document.getElementById('bossSelect');
     const bossSearch = document.getElementById('bossSearch');
     const counterList = document.getElementById('counterList');
     const altList = document.getElementById('altList');
 
+    async function loadPokemonList() {
+      try {
+        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+        const data = await response.json();
+        apiPokemonList = data.results.map((pokemon) => pokemon.name);
+      } catch (error) {
+        console.warn('No se pudo cargar la lista de Pokémon.', error);
+      }
+    }
+
     function buildBossList() {
       const bossOptions = new Map();
       Object.values(defaultCounters).forEach((boss) => bossOptions.set(boss.name, boss.name));
       storedCounters.forEach((entry) => bossOptions.set(entry.bossName, entry.bossName));
+      apiPokemonList.forEach((pokemon) => bossOptions.set(pokemon, pokemon));
 
       bossSelect.innerHTML = '';
       bossOptions.forEach((value) => {
@@ -171,8 +183,13 @@
       }
     });
 
-    buildBossList();
-    renderCounters(bossSelect.value);
+    async function initPage() {
+      await loadPokemonList();
+      buildBossList();
+      renderCounters(bossSelect.value);
+    }
+
+    initPage();
   </script>
 </body>
 </html>

@@ -58,7 +58,7 @@
   <footer class="footer">Desarrollado por Delgado Cerros Rodrigo Daniel · PokéGO Hub</footer>
 
   <script>
-    const pokemonPool = [
+    const fallbackPool = [
       { name: 'Azumarill', pvp: 95, pve: 40, cost: 75000 },
       { name: 'Dragonite', pvp: 70, pve: 90, cost: 90000 },
       { name: 'Talonflame', pvp: 88, pve: 55, cost: 65000 },
@@ -71,26 +71,71 @@
     const form = document.getElementById('stardustForm');
     const list = document.getElementById('priorityList');
 
-    pokemonPool.forEach((pokemon) => {
-      const option = document.createElement('option');
-      option.value = pokemon.name;
-      option.textContent = `${pokemon.name} (costo ${pokemon.cost})`;
-      teamSelect.appendChild(option);
-    });
+    let apiPokemonList = [];
 
-    form.addEventListener('submit', (event) => {
+    async function loadPokemonList() {
+      try {
+        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+        const data = await response.json();
+        apiPokemonList = data.results.map((pokemon) => pokemon.name);
+      } catch (error) {
+        console.warn('No se pudo cargar la lista de Pokémon.', error);
+        apiPokemonList = fallbackPool.map((pokemon) => pokemon.name);
+      }
+
+      teamSelect.innerHTML = '';
+      apiPokemonList.forEach((pokemon) => {
+        const option = document.createElement('option');
+        option.value = pokemon;
+        option.textContent = pokemon;
+        teamSelect.appendChild(option);
+      });
+    }
+
+    async function fetchStats(name) {
+      try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
+        if (!response.ok) {
+          throw new Error('No encontrado');
+        }
+        const data = await response.json();
+        const stats = {
+          ataque: data.stats.find((stat) => stat.stat.name === 'attack')?.base_stat || 0,
+          defensa: data.stats.find((stat) => stat.stat.name === 'defense')?.base_stat || 0,
+          aguante: data.stats.find((stat) => stat.stat.name === 'hp')?.base_stat || 0
+        };
+        return stats;
+      } catch (error) {
+        const fallback = fallbackPool.find((pokemon) => pokemon.name.toLowerCase() === name.toLowerCase());
+        if (fallback) {
+          return { ataque: fallback.pve, defensa: fallback.pvp, aguante: 60 };
+        }
+        return null;
+      }
+    }
+
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const dustAvailable = Number(document.getElementById('dustAvailable').value);
       const goal = document.getElementById('goal').value;
       const selected = Array.from(teamSelect.selectedOptions).map((option) => option.value);
 
-      const choices = pokemonPool.filter((pokemon) => selected.includes(pokemon.name));
-      const ranked = choices
-        .map((pokemon) => {
-          const score = goal === 'pvp' ? pokemon.pvp : pokemon.pve;
-          const affordability = dustAvailable >= pokemon.cost ? 1 : 0.7;
-          return { ...pokemon, score: score * affordability };
+      const statsList = await Promise.all(selected.map((name) => fetchStats(name)));
+      const ranked = selected
+        .map((name, index) => {
+          const stats = statsList[index];
+          if (!stats) {
+            return null;
+          }
+          const base = stats.ataque + stats.defensa + stats.aguante;
+          const score = goal === 'pvp'
+            ? (stats.defensa * 0.4 + stats.aguante * 0.4 + stats.ataque * 0.2)
+            : (stats.ataque * 0.5 + stats.defensa * 0.3 + stats.aguante * 0.2);
+          const cost = Math.round(base * 120);
+          const affordability = dustAvailable >= cost ? 1 : 0.7;
+          return { name, score: score * affordability, cost, stats };
         })
+        .filter(Boolean)
         .sort((a, b) => b.score - a.score);
 
       list.innerHTML = '';
@@ -100,7 +145,8 @@
         item.className = 'list-item';
         item.innerHTML = `
           <strong>#${index + 1} ${pokemon.name}</strong><br>
-          Score ${Math.round(pokemon.score)} · Costo ${pokemon.cost} stardust
+          Score ${Math.round(pokemon.score)} · Costo ${pokemon.cost} stardust<br>
+          <span class="badge">Ataque ${pokemon.stats.ataque} · Defensa ${pokemon.stats.defensa} · Aguante ${pokemon.stats.aguante}</span>
         `;
         list.appendChild(item);
       });
@@ -109,6 +155,8 @@
         list.innerHTML = '<p class="notice">Selecciona al menos un Pokémon para generar el ranking.</p>';
       }
     });
+
+    loadPokemonList();
   </script>
 </body>
 </html>
