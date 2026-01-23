@@ -1,0 +1,149 @@
+:root {
+    --pokemon-green: #3aaf3f;
+    --pokemon-blue: #2f7ed8;
+    --pokemon-yellow: #f5c542;
+    --dark: #1f1f1f;
+    --light: #f4f4f9;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--light);
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.site-header {
+    background-color: var(--pokemon-green);
+    padding: 16px;
+    text-align: center;
+    color: white;
+}
+
+.site-header h1 {
+    margin: 0 0 8px;
+    font-size: 2rem;
+}
+
+.site-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.site-nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.site-nav a:hover {
+    color: var(--pokemon-yellow);
+}
+
+main {
+    padding: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+section {
+    margin-bottom: 24px;
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.hero {
+    border-left: 6px solid var(--pokemon-blue);
+}
+
+.event-list,
+.poi-list {
+    padding-left: 20px;
+}
+
+.raid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.raid-card {
+    border: 2px solid var(--pokemon-yellow);
+    border-radius: 10px;
+    padding: 16px;
+    background: #fffaf0;
+}
+
+.map-container {
+    height: 420px;
+    border-radius: 12px;
+    border: 3px solid var(--pokemon-blue);
+}
+
+.forum-form form,
+.contact-form form {
+    display: grid;
+    gap: 12px;
+}
+
+input,
+textarea {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+button {
+    background-color: var(--pokemon-blue);
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1f5ea8;
+}
+
+.post {
+    border-left: 4px solid var(--pokemon-green);
+    padding-left: 12px;
+    margin-bottom: 12px;
+}
+
+footer {
+    text-align: center;
+    padding: 12px;
+    background-color: var(--pokemon-green);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .site-header h1 {
+        font-size: 1.5rem;
+    }
+
+    main {
+        padding: 16px;
+    }
+
+    section {
+        padding: 16px;
+    }
+}
